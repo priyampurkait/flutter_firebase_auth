@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_auth/providers/firebase_auth_state.dart';
+import 'package:flutter_firebase_auth/res/strings.dart';
 import 'package:flutter_firebase_auth/screens/get_started_screen/get_started_page.dart';
 import 'package:flutter_firebase_auth/screens/main_screen/main_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -28,9 +30,10 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Firebase Auth',
+      title: Strings.appName,
       theme: ThemeData(
         primarySwatch: Colors.green,
+        fontFamily: GoogleFonts.breeSerif().fontFamily,
       ),
       home: AuthenticationWrapper(),
     );

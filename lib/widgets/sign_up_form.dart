@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_auth/res/strings.dart';
 
-class SignInForm extends StatelessWidget {
+class SignUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
+    String _name;
     String _email;
     String _password;
     // String _firebaseError;
@@ -14,13 +15,33 @@ class SignInForm extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            Strings.login,
+            Strings.signup,
             style: Theme.of(context)
                 .textTheme
                 .headline4
                 .copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 32.0),
+          TextFormField(
+            decoration: const InputDecoration(
+              contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+              labelText: Strings.labelTextName,
+              hintText: Strings.hintTextName,
+              border: OutlineInputBorder(),
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Name is required!';
+              } else if (value.length < 2) {
+                return 'Name must be at least 2 characters long';
+              } else if (value.length > 30) {
+                return 'Name must be less than 30 characters long';
+              }
+              return null;
+            },
+            onSaved: (value) => _name = value.trim(),
+          ),
+          const SizedBox(height: 16.0),
           TextFormField(
             decoration: const InputDecoration(
               contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
@@ -69,11 +90,12 @@ class SignInForm extends StatelessWidget {
                 final form = _formKey.currentState;
                 if (form.validate()) {
                   form.save();
-                  debugPrint("email: $_email  password: $_password");
+                  debugPrint(
+                      "name: $_name email: $_email  password: $_password");
                 }
               },
               child: Text(
-                Strings.signinEmailButton.toUpperCase(),
+                Strings.signupButton.toUpperCase(),
               ),
             ),
           ),
