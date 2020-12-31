@@ -1,14 +1,22 @@
+import 'package:flutter_firebase_auth/providers/firebase_auth_state.dart';
+import 'package:flutter_firebase_auth/screens/sign_in_screen/sign_in_page.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_auth/res/strings.dart';
+import 'package:flutter_firebase_auth/utils/utils.dart';
 
 class SignUpForm extends StatelessWidget {
+  final String navigator;
+
+  const SignUpForm({Key key, this.navigator}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final _isDisableButton = context.watch<FirebaseAuthState>().isDisableButton;
     final _formKey = GlobalKey<FormState>();
     String _name;
     String _email;
     String _password;
-    // String _firebaseError;
+    String _firebaseError;
 
     return Form(
       key: _formKey,
@@ -29,16 +37,8 @@ class SignUpForm extends StatelessWidget {
               hintText: Strings.hintTextName,
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value.isEmpty) {
-                return 'Name is required!';
-              } else if (value.length < 2) {
-                return 'Name must be at least 2 characters long';
-              } else if (value.length > 30) {
-                return 'Name must be less than 30 characters long';
-              }
-              return null;
-            },
+            validator: (value) =>
+                Utils.nameValidator(value.trim(), _firebaseError),
             onSaved: (value) => _name = value.trim(),
           ),
           const SizedBox(height: 16.0),
@@ -49,18 +49,7 @@ class SignUpForm extends StatelessWidget {
               hintText: Strings.hintTextEmail,
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              final bool emailValidation = RegExp(
-                      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
-                  .hasMatch(value);
-
-              if (value.isEmpty) {
-                return 'Email is required!';
-              } else if (!emailValidation) {
-                return 'The email is not a valid email address.';
-              }
-              return null;
-            },
+            validator: (value) => Utils.emailValidator(value, _firebaseError),
             onSaved: (value) => _email = value.trim(),
           ),
           const SizedBox(height: 16.0),
@@ -71,14 +60,8 @@ class SignUpForm extends StatelessWidget {
               hintText: Strings.hintTexPassword,
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value.trim().isEmpty) {
-                return 'Password is required!';
-              } else if (value.length < 6) {
-                return 'Minimun length of password is 6.';
-              }
-              return null;
-            },
+            validator: (value) =>
+                Utils.passwordValidator(value, _firebaseError),
             onSaved: (value) => _password = value.trim(),
             obscureText: true,
           ),
@@ -98,6 +81,22 @@ class SignUpForm extends StatelessWidget {
                 Strings.signupButton.toUpperCase(),
               ),
             ),
+          ),
+          TextButton(
+            onPressed: _isDisableButton
+                ? null
+                : () {
+                    if (navigator == 'push') {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const SignInPage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+            child: const Text(Strings.haveAnAccount),
           ),
         ],
       ),

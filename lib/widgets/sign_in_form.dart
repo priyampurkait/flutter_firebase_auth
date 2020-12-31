@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_firebase_auth/providers/firebase_auth_state.dart';
 import 'package:flutter_firebase_auth/res/strings.dart';
+import 'package:flutter_firebase_auth/screens/forgot_password_screen/forgot_passwort_page.dart';
+import 'package:flutter_firebase_auth/screens/sign_up_screen/sign_up_page.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_firebase_auth/utils/utils.dart';
 
 class SignInForm extends StatelessWidget {
+  final String navigator;
+
+  const SignInForm({Key key, this.navigator}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    final _isDisableButton = context.watch<FirebaseAuthState>().isDisableButton;
     final _formKey = GlobalKey<FormState>();
     String _email;
     String _password;
-    // String _firebaseError;
+    String _firebaseError;
 
     return Form(
       key: _formKey,
       child: Column(
+        // crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             Strings.login,
@@ -28,18 +38,7 @@ class SignInForm extends StatelessWidget {
               hintText: Strings.hintTextEmail,
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              final bool emailValidation = RegExp(
-                      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$")
-                  .hasMatch(value);
-
-              if (value.isEmpty) {
-                return 'Email is required!';
-              } else if (!emailValidation) {
-                return 'The email is not a valid email address.';
-              }
-              return null;
-            },
+            validator: (value) => Utils.emailValidator(value, _firebaseError),
             onSaved: (value) => _email = value.trim(),
           ),
           const SizedBox(height: 16.0),
@@ -50,18 +49,29 @@ class SignInForm extends StatelessWidget {
               hintText: Strings.hintTexPassword,
               border: OutlineInputBorder(),
             ),
-            validator: (value) {
-              if (value.trim().isEmpty) {
-                return 'Password is required!';
-              } else if (value.length < 6) {
-                return 'Minimun length of password is 6.';
-              }
-              return null;
-            },
+            validator: (value) =>
+                Utils.passwordValidator(value, _firebaseError),
             onSaved: (value) => _password = value.trim(),
             obscureText: true,
           ),
-          const SizedBox(height: 16.0),
+          const SizedBox(height: 4.0),
+          Row(
+            children: [
+              TextButton(
+                onPressed: _isDisableButton
+                    ? null
+                    : () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ForgotPasswordPage(),
+                          ),
+                        );
+                      },
+                child: const Text(Strings.forgotPassword),
+              ),
+              const Spacer(),
+            ],
+          ),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -76,6 +86,22 @@ class SignInForm extends StatelessWidget {
                 Strings.signinEmailButton.toUpperCase(),
               ),
             ),
+          ),
+          TextButton(
+            onPressed: _isDisableButton
+                ? null
+                : () {
+                    if (navigator == 'push') {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const SignUpPage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.of(context).pop();
+                    }
+                  },
+            child: const Text(Strings.createAnAccount),
           ),
         ],
       ),

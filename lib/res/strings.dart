@@ -23,5 +23,35 @@ class Strings {
 
   static const String signup = 'Create new account';
   static const String labelTextName = 'Name';
-  static const String hintTextName = 'Enter your name';
+  static const String hintTextName = 'Enter your name.';
+
+  static const String haveAnAccount = 'Have an account? Sign in';
+  static const String createAnAccount = 'Dont have an account? Sign up';
+  static const String forgotPassword = 'Forgot password?';
+  static const String forgotPasswordButton = 'Submit';
+
+  //Error messages
+  static const String emailRequiredError = 'Enter an email';
+  static const String emailValidationError =
+      'The email is not a valid email address.';
+
+  static const String firebaseEmailNotFoundError =
+      'There is no user record corresponding to this identifier. The user may have been deleted.';
+  static const String emailNotFoundError =
+      'Email not found! Please create an account.';
+  static const String emailAlreadyInUsedError =
+      'The email address is already in use by another account.';
+
+  static const String passwordRequiredError = 'Enter a password.';
+  static const String passwordShortError = 'Minimun length of password is 6.';
+  static const String passwordInvalidError = 'The password is invalid.';
+
+  static const String nameRequiredError = 'Name is required!';
+  static const String nameShortError =
+      'Name must be at least 2 characters long';
+  static const String nameLongError =
+      'Name must be less than 30 characters long';
+
+  static const String regExp =
+      r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
 }

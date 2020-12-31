@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_firebase_auth/providers/firebase_auth_state.dart';
 import 'package:flutter_firebase_auth/res/strings.dart';
@@ -9,6 +10,8 @@ import 'package:provider/provider.dart';
 class GetStarted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final _isDisableButton = context.watch<FirebaseAuthState>().isDisableButton;
+    final _authProgressn = context.watch<FirebaseAuthState>().authProgressn;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -28,22 +31,27 @@ class GetStarted extends StatelessWidget {
         const SizedBox(height: 32.0),
         ElevatedButton(
           onPressed: () {
-            _onGetStartedButtonClick(context);
+            _onGetStartedButtonClick(context, _isDisableButton);
           },
           child: Text(Strings.getStartedButton.toUpperCase()),
         ),
-        const SizedBox(height: 8.0),
         TextButton(
-          onPressed: () {
-            _onSignInButtonClick(context);
-          },
+          onPressed: _isDisableButton
+              ? null
+              : () {
+                  _onSignInButtonClick(context);
+                },
           child: Text(Strings.signinButton.toUpperCase()),
         ),
+        if (_authProgressn) ...[
+          const SizedBox(height: 8.0),
+          const CupertinoActivityIndicator()
+        ],
       ],
     );
   }
 
-  void _onGetStartedButtonClick(BuildContext context) {
+  void _onGetStartedButtonClick(BuildContext context, bool isDisableButton) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -60,7 +68,7 @@ class GetStarted extends StatelessWidget {
   void _onSignInButtonClick(BuildContext context) => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SignInPage(),
+          builder: (_) => const SignInPage(navigator: 'push'),
         ),
       );
 }
@@ -72,6 +80,8 @@ class DialogContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _authProgressn = context.watch<FirebaseAuthState>().authProgressn;
+    final _isDisableButton = context.watch<FirebaseAuthState>().isDisableButton;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -83,18 +93,24 @@ class DialogContent extends StatelessWidget {
         ),
         const SizedBox(height: 16.0),
         ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-            _onSignUpButtonClick(context);
-          },
+          onPressed: _isDisableButton
+              ? null
+              : () {
+                  Navigator.of(context).pop();
+                  _onSignUpButtonClick(context);
+                },
           child: Text(Strings.signupButton.toUpperCase()),
         ),
         const SizedBox(height: 8.0),
         TextButton(
-          onPressed: () async {
-            _onSkipButtonClick(context);
-          },
-          child: Text(Strings.skipButton.toUpperCase()),
+          onPressed: _isDisableButton
+              ? null
+              : () async {
+                  _onSkipButtonClick(context);
+                },
+          child: _authProgressn
+              ? const CupertinoActivityIndicator()
+              : Text(Strings.skipButton.toUpperCase()),
         ),
       ],
     );
@@ -103,13 +119,14 @@ class DialogContent extends StatelessWidget {
   void _onSignUpButtonClick(BuildContext context) => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => SignUpPage(),
+          builder: (_) => const SignUpPage(navigator: 'push'),
         ),
       );
 
   Future<void> _onSkipButtonClick(BuildContext context) async {
     final result = await context.read<FirebaseAuthState>().signInAnonymously();
     if (result == 'no connection!') {
+      Navigator.of(context).pop();
       Utils.snakbar(context: context);
     }
     if (result == null) {
