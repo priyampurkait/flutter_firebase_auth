@@ -55,12 +55,17 @@ class GetStarted extends StatelessWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
-        title: Text(
-          Strings.account,
-          textAlign: TextAlign.center,
+      builder: (context) => WillPopScope(
+        onWillPop: () async {
+          return Future.value(isDisableButton);
+        },
+        child: const AlertDialog(
+          title: Text(
+            Strings.account,
+            textAlign: TextAlign.center,
+          ),
+          content: DialogContent(),
         ),
-        content: DialogContent(),
       ),
     );
   }

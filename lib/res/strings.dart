@@ -46,7 +46,7 @@ class Strings {
   static const String passwordShortError = 'Minimun length of password is 6.';
   static const String passwordInvalidError = 'The password is invalid.';
 
-  static const String nameRequiredError = 'Name is required!';
+  static const String nameRequiredError = 'Enter your name';
   static const String nameShortError =
       'Name must be at least 2 characters long';
   static const String nameLongError =

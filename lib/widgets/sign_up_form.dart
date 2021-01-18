@@ -43,11 +43,13 @@ class SignUpForm extends StatelessWidget {
           ),
           const SizedBox(height: 16.0),
           TextFormField(
-            decoration: const InputDecoration(
-              contentPadding: EdgeInsets.symmetric(horizontal: 16.0),
+            decoration: InputDecoration(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
               labelText: Strings.labelTextEmail,
               hintText: Strings.hintTextEmail,
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
+              fillColor: Colors.grey.shade300,
+              filled: true,
             ),
             validator: (value) => Utils.emailValidator(value, _firebaseError),
             onSaved: (value) => _email = value.trim(),
